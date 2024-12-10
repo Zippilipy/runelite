@@ -10,7 +10,7 @@ import java.util.List;
 
 public class JunkFilterOverlay extends Overlay
 {
-    private List<Item> filteredItems;
+    private List<Integer> filteredItems;
 
     public JunkFilterOverlay()
     {
@@ -24,16 +24,16 @@ public class JunkFilterOverlay extends Overlay
         if (filteredItems != null && !filteredItems.isEmpty())
         {
             int y = 10;
-            for (Item item : filteredItems)
+            for (int id : filteredItems)
             {
-                graphics.drawString(item.getId() + " x" + item.getQuantity(), 10, y);
+                graphics.drawString(String.valueOf(id), 10, y);
                 y += 15;
             }
         }
         return null;
     }
 
-    public void setFilteredItems(List<Item> filteredItems)
+    public void setFilteredItems(List<Integer> filteredItems)
     {
         this.filteredItems = filteredItems;
     }
