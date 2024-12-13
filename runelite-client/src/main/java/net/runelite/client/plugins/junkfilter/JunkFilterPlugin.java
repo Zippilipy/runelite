@@ -8,7 +8,9 @@ import net.runelite.api.ItemContainer;
 import net.runelite.api.events.ItemContainerChanged;
 import net.runelite.api.events.WidgetClosed;
 import net.runelite.api.events.WidgetLoaded;
+import net.runelite.api.widgets.ComponentID;
 import net.runelite.api.widgets.InterfaceID;
+import net.runelite.api.widgets.Widget;
 import net.runelite.client.eventbus.Subscribe;
 import net.runelite.client.plugins.Plugin;
 import net.runelite.client.plugins.PluginDescriptor;
@@ -56,6 +58,23 @@ public class JunkFilterPlugin extends Plugin
         System.out.println("Junk Filter Plugin Disabled");
     }
 
+    private void updateBankDisplay(List<Item> items) {
+        Widget bankItemContainer = client.getWidget(ComponentID.BANK_ITEM_CONTAINER);
+        if (bankItemContainer == null || bankItemContainer.getChildren() == null) {
+            return;
+        }
+        Widget[] bankItems = bankItemContainer.getChildren();
+        int type = bankItems[0].getType();
+        int id = bankItems[0].getItemQuantity();
+        for(int i = 0; i < bankItems.length; i++) {
+            bankItemContainer.setChildren(bankItems);
+        }
+        System.out.println("Bank contains " + bankItems.length + " items.");
+        //List<Widget> children = new ArrayList<>();
+        for (Widget bankItemWidget : bankItems) {
+        }
+    }
+
     @Subscribe
     public void onItemContainerChanged(ItemContainerChanged event) {
         if (event.getContainerId() !=  InventoryID.BANK.getId()) {
@@ -63,9 +82,9 @@ public class JunkFilterPlugin extends Plugin
         }
         ItemContainer bank = event.getItemContainer();
         List<Item> items = Arrays.asList(bank.getItems());
-        List<Integer> allowedItems = allowedItems(items);
-        junkFilterOverlay.setFilteredItems(allowedItems);
-
+        List<Item> allowedItems = allowedItems(items);
+        System.out.println(allowedItems);
+        updateBankDisplay(allowedItems);
     }
 
     @Subscribe
@@ -77,15 +96,14 @@ public class JunkFilterPlugin extends Plugin
         }
     }
 
-    private List<Integer> allowedItems(List<Item> items) {
-        List<Integer> itemIds = items.stream().map(Item::getId).collect(Collectors.toList());
-        return intersection(itemIds, allowedItems);
+    private List<Item> allowedItems(List<Item> items) {
+        return intersection(items, allowedItems);
     }
 
-    private List<Integer> intersection(List<Integer> A, List<Integer> B) {
-        return A.stream()
+    private List<Item> intersection(List<Item> items, List<Integer> itemIds) {
+        return items.stream()
                 .distinct()
-                .filter(B::contains)
+                .filter(item -> itemIds.contains(item.getId()))
                 .collect(Collectors.toList());
     }
 }

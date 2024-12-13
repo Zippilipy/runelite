@@ -6,11 +6,12 @@ import net.runelite.client.ui.overlay.OverlayLayer;
 import net.runelite.client.ui.overlay.OverlayPosition;
 
 import java.awt.*;
+import java.util.ArrayList;
 import java.util.List;
 
 public class JunkFilterOverlay extends Overlay
 {
-    private List<Integer> filteredItems;
+    private List<Integer> filteredItems = new ArrayList<>();
 
     public JunkFilterOverlay()
     {
